@@ -5,16 +5,22 @@
         <h2>登录</h2>
         <el-row>
           <span>用户名/邮箱：</span>
-          <el-input></el-input>
+          <el-input
+          v-model="registerInfo.account"
+          ></el-input>
         </el-row>
 
         <el-row>
           <span>密码：</span>
-          <el-input></el-input>
+          <el-input
+          v-model="registerInfo.password"
+          ></el-input>
         </el-row>
       </el-col>
       <el-row class="mainRow">
-        <el-button>登录</el-button>
+        <el-button
+        @click="accountCheck"
+        >登录</el-button>
         <span style="width: 159px"></span>
         <el-button>取消</el-button>
       </el-row>
@@ -29,7 +35,54 @@
 </template>
   
 <script setup>
-// import {reactive, ref} from "vue"
+import {reactive, ref, getCurrentInstance} from "vue"
+import { useRouter } from "vue-router";
+import Store from "../store/index.js"
+
+const router = useRouter()
+const store = Store()
+console.log(store)
+
+const registerInfo = reactive({
+  account:"",
+  password:""
+})
+
+// 申请服务器的用户信息
+const currentInstance = getCurrentInstance();
+const { $axios } = currentInstance.appContext.config.globalProperties;
+
+function getAccountMSG(){
+  return $axios.get("http://localhost:3000/account")
+}
+
+// 用户检查
+function accountCheck(){
+  getAccountMSG().then((msg)=>{
+    if (msg.status == 200){
+        for (let i = 0;i < msg.data.length; i++)
+        {
+          if (msg.data[i].name == registerInfo.account || msg.data[i].email == registerInfo.account){
+
+            if (msg.data[i].password == registerInfo.password){
+              alert("登录成功")
+              // 跳转到首页
+              router.push("/homePage")
+            }
+            else
+            {
+              alert("密码错误")
+            }
+            break;
+          }
+          else
+          {
+            alert("该用户或邮箱没有注册")
+          }
+        }
+    }
+  })
+}
 
 
 

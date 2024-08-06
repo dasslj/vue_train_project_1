@@ -74,7 +74,7 @@ const { $axios } = currentInstance.appContext.config.globalProperties;
 
 // 上传用户数据
 function postDatatoServer(data){
-    return $axios.post("http://localhost:3000/test", data)
+    return $axios.post("http://localhost:3000/account", data)
 }
 
 // 获取用户数据
